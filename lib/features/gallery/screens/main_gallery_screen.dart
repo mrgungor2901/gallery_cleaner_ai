@@ -135,8 +135,8 @@ class _MainGalleryScreenState extends State<MainGalleryScreen> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Fotoğraflarınızı görüntülemek için
-galeri erişim izni gerekiyor.',
+                  'Fotoğraflarınızı görüntülemek için '
+                  'galeri erişim izni gerekiyor.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
