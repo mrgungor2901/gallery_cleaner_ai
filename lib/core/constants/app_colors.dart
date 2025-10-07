@@ -11,10 +11,12 @@ class AppColors {
   static const Color secondaryLight = Color(0xFF34D399);
   static const Color secondaryDark = Color(0xFF059669);
 
-  // Background Colors
+  // Background Colors - Light Mode
   static const Color background = Color(0xFFF8FAFC);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceVariant = Color(0xFFF1F5F9);
+  static const Color outline = Color(0xFFE2E8F0);
+  static const Color cardBackground = Color(0xFFFFFFFF);
 
   // Text Colors
   static const Color textPrimary = Color(0xFF1E293B);

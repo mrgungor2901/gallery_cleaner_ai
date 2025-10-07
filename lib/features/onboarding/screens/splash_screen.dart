@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../app/routes.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/preferences_service.dart';
+import '../../../core/services/permission_service.dart';
+import '../../gallery/providers/gallery_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -47,12 +51,46 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
   }
 
-  void _navigateToNext() {
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+  Future<void> _navigateToNext() async {
+    await Future.delayed(const Duration(milliseconds: 3000));
+
+    if (!mounted) return;
+
+    // Kaydedilmiş durumu kontrol et
+    final isOnboardingCompleted =
+        await PreferencesService.isOnboardingCompleted();
+
+    if (!mounted) return;
+
+    if (isOnboardingCompleted) {
+      // Onboarding tamamlanmış - izin durumunu kontrol et
+      debugPrint('SplashScreen: Onboarding completed, checking permission...');
+
+      final galleryProvider = context.read<GalleryProvider>();
+      final hasPermission = await PermissionService.checkGalleryPermission();
+
+      if (!mounted) return;
+
+      if (hasPermission) {
+        // İzin var - direkt galeri ekranına git (fotoğraflar arka planda yüklenecek)
+        debugPrint(
+            'SplashScreen: Permission granted, navigating to gallery...');
+
+        Navigator.of(context).pushReplacementNamed(AppRoutes.mainGallery);
+
+        // Arka planda fotoğrafları yükle
+        galleryProvider.startCleaning();
+      } else {
+        // İzin yok - permission ekranına git
+        debugPrint(
+            'SplashScreen: Permission not granted, navigating to permission screen...');
+        Navigator.of(context).pushReplacementNamed(AppRoutes.permission);
       }
-    });
+    } else {
+      // İlk açılış - onboarding'e git
+      debugPrint('SplashScreen: First launch, navigating to onboarding...');
+      Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
+    }
   }
 
   @override
@@ -88,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),

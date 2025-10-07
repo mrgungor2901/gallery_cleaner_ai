@@ -51,7 +51,7 @@ class CategoryResultsScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(16),
-            color: _getCategoryColor(category).withOpacity(0.1),
+            color: _getCategoryColor(category).withValues(alpha: 0.1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

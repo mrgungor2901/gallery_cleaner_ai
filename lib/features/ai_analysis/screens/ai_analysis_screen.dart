@@ -26,7 +26,8 @@ class _AIAnalysisScreenState extends State<AIAnalysisScreen> {
 
   void _startAnalysis() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final photos = ModalRoute.of(context)?.settings.arguments as List<AssetEntity>?;
+      final photos =
+          ModalRoute.of(context)?.settings.arguments as List<AssetEntity>?;
       if (photos != null && photos.isNotEmpty) {
         context.read<AIProvider>().analyzePhotos(photos);
       }
@@ -55,15 +56,20 @@ class _AIAnalysisScreenState extends State<AIAnalysisScreen> {
     }
 
     final confirmed = await _showDeleteConfirmation(selectedPhotos.length);
-    if (!confirmed) return;
+    if (!confirmed || !mounted) return;
 
     try {
       await galleryProvider.deletePhotos(selectedPhotos);
+      if (!mounted) return;
+
       _showMessage('${selectedPhotos.length} fotoğraf başarıyla silindi');
 
       // Navigate back to gallery
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      if (mounted) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
     } catch (e) {
+      if (!mounted) return;
       _showMessage('Silme işlemi sırasında hata oluştu: $e');
     }
   }
@@ -193,7 +199,7 @@ class _AIAnalysisScreenState extends State<AIAnalysisScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),

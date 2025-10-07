@@ -166,12 +166,12 @@ class AnalysisResults extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withOpacity(0.1),
+                  color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline,
                       color: AppColors.warning,
                       size: 20,
@@ -235,7 +235,7 @@ class AnalysisResults extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Icon(
@@ -300,7 +300,7 @@ class AnalysisResults extends StatelessWidget {
 
               // Arrow
               if (hasPhotos)
-                Icon(
+                const Icon(
                   Icons.arrow_forward_ios,
                   color: AppColors.textTertiary,
                   size: 16,

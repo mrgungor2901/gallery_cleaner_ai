@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:photo_manager/photo_manager.dart';
 import '../../../app/routes.dart';
 import '../../../core/constants/app_colors.dart';
 import '../providers/gallery_provider.dart';
 import '../widgets/gallery_app_bar.dart';
 import '../widgets/gallery_stats.dart';
-import '../widgets/photo_grid.dart';
+import '../widgets/monthly_group_card.dart';
 import '../widgets/analysis_fab.dart';
 
 class MainGalleryScreen extends StatefulWidget {
@@ -56,6 +57,17 @@ class _MainGalleryScreenState extends State<MainGalleryScreen> {
     }
   }
 
+  void _navigateToMonthDetail(String monthKey, List<dynamic> photos) {
+    Navigator.of(context).pushNamed(
+      AppRoutes.monthDetail,
+      arguments: {
+        'monthName':
+            context.read<GalleryProvider>().formatMonthForDisplay(monthKey),
+        'photos': photos,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +85,28 @@ class _MainGalleryScreenState extends State<MainGalleryScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: GalleryStats(
-                      totalPhotos: galleryProvider.totalPhotos,
+                      totalPhotos: galleryProvider.allPhotos
+                          .where((asset) => asset.type == AssetType.image)
+                          .length,
+                      totalVideos: galleryProvider.allPhotos
+                          .where((asset) => asset.type == AssetType.video)
+                          .length,
                       displayedPhotos: galleryProvider.displayedPhotos,
+                      onPhotosTap: () {
+                        galleryProvider
+                            .setMediaTypeFilter(MediaTypeFilter.photosOnly);
+                      },
+                      onVideosTap: () {
+                        galleryProvider
+                            .setMediaTypeFilter(MediaTypeFilter.videosOnly);
+                      },
+                      onAllTap: () {
+                        galleryProvider.setMediaTypeFilter(MediaTypeFilter.all);
+                      },
+                      isPhotosSelected: galleryProvider.mediaTypeFilter ==
+                          MediaTypeFilter.photosOnly,
+                      isVideosSelected: galleryProvider.mediaTypeFilter ==
+                          MediaTypeFilter.videosOnly,
                     ),
                   ),
                 ),
@@ -101,6 +133,8 @@ class _MainGalleryScreenState extends State<MainGalleryScreen> {
     switch (galleryProvider.state) {
       case GalleryState.initial:
       case GalleryState.loading:
+      case GalleryState.scanning:
+      case GalleryState.scanned:
         return const SliverFillRemaining(
           child: Center(
             child: Column(
@@ -216,9 +250,52 @@ class _MainGalleryScreenState extends State<MainGalleryScreen> {
           );
         }
 
-        return PhotoGrid(
-          photos: galleryProvider.photos,
-          isLoadingMore: galleryProvider.isLoadingMore,
+        // Display monthly grouped photos
+        final groupedPhotos = galleryProvider.groupedPhotos;
+        if (groupedPhotos.isEmpty) {
+          return const SliverFillRemaining(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        // Sort months (newest first)
+        final sortedMonths = groupedPhotos.keys.toList()
+          ..sort((a, b) => b.compareTo(a));
+
+        return SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index >= sortedMonths.length) {
+                  // Loading more indicator
+                  if (galleryProvider.isLoadingMore) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }
+
+                final monthKey = sortedMonths[index];
+                final photos = groupedPhotos[monthKey]!;
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: MonthlyGroupCard(
+                    monthKey: monthKey,
+                    photos: photos,
+                    displayMonth:
+                        galleryProvider.formatMonthForDisplay(monthKey),
+                    onTap: () => _navigateToMonthDetail(monthKey, photos),
+                  ),
+                );
+              },
+              childCount:
+                  sortedMonths.length + (galleryProvider.isLoadingMore ? 1 : 0),
+            ),
+          ),
         );
     }
   }

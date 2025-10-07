@@ -36,10 +36,10 @@ class AppTheme {
           textStyle: AppTextStyles.buttonText,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        shadowColor: Colors.black.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -51,7 +51,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }

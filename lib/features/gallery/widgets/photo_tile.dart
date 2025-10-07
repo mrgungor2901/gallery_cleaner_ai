@@ -34,7 +34,8 @@ class _PhotoTileState extends State<PhotoTile> {
 
   Future<void> _loadThumbnail() async {
     try {
-      final thumbnailData = await GalleryService.getPhotoThumbnail(widget.photo);
+      final thumbnailData =
+          await GalleryService.getPhotoThumbnail(widget.photo);
 
       if (thumbnailData != null && mounted) {
         setState(() {
@@ -85,7 +86,7 @@ class _PhotoTileState extends State<PhotoTile> {
               // Selection overlay
               if (widget.isSelected)
                 Container(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha: 0.3),
                   child: const Center(
                     child: Icon(
                       Icons.check_circle,
@@ -108,7 +109,7 @@ class _PhotoTileState extends State<PhotoTile> {
                       decoration: BoxDecoration(
                         color: widget.isSelected
                             ? AppColors.primary
-                            : Colors.white.withOpacity(0.8),
+                            : Colors.white.withValues(alpha: 0.8),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: widget.isSelected
@@ -124,6 +125,25 @@ class _PhotoTileState extends State<PhotoTile> {
                               color: Colors.white,
                             )
                           : null,
+                    ),
+                  ),
+                ),
+
+              // Video ikonu
+              if (widget.photo.type == AssetType.video)
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 16,
                     ),
                   ),
                 ),

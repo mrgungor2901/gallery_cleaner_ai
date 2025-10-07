@@ -138,7 +138,9 @@ class AIProvider extends ChangeNotifier {
 
   List<AssetEntity> getAllSelectedPhotos() {
     final allSelected = <AssetEntity>[];
-    _selectedPhotos.values.forEach((set) => allSelected.addAll(set));
+    for (var set in _selectedPhotos.values) {
+      allSelected.addAll(set);
+    }
     return allSelected;
   }
 
@@ -149,7 +151,9 @@ class AIProvider extends ChangeNotifier {
     _totalPhotos = 0;
     _errorMessage = null;
     _currentAnalysisStep = '';
-    _selectedPhotos.values.forEach((set) => set.clear());
+    for (var set in _selectedPhotos.values) {
+      set.clear();
+    }
     notifyListeners();
   }
 

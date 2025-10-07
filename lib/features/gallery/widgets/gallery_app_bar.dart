@@ -44,7 +44,7 @@ class _GalleryAppBarState extends State<GalleryAppBar> {
       backgroundColor: Colors.white,
       elevation: 0,
       scrolledUnderElevation: 1,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: Colors.black.withValues(alpha: 0.1),
       flexibleSpace: FlexibleSpaceBar(
         titlePadding: const EdgeInsets.only(left: 16, bottom: 16),
         title: _isSearching
